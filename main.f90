@@ -2,6 +2,7 @@ program main
 use variables
 use md
 use gr
+use rmsdisplacement
 implicit none
 
 integer :: istep, T= 0
@@ -27,5 +28,6 @@ DO istep=1,maxstep
     END IF
   END DO
 
-call calculate_gr(T-1)
+call calculate_gr(T)
+call rmsd(T)
 end program main

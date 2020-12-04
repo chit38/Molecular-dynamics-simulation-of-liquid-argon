@@ -41,7 +41,7 @@ end subroutine create_lattice
 SUBROUTINE get_initial_velocities
     IMPLICIT NONE
     REAL*8, PARAMETER :: pi=4.d0*ATAN(1.d0)
-    REAL*8 :: dum(ndim), sigma
+    REAL*8 :: dum(2), sigma
     INTEGER :: ii, i, k
 
     allocate(vel(3,natoms))
@@ -49,12 +49,12 @@ SUBROUTINE get_initial_velocities
     ii=0
     DO i=1,natoms
       DO k=1,ndim
-        CALL RANDOM_NUMBER(dum(1:ndim))
+        CALL RANDOM_NUMBER(dum(1:2))
         ii=ii+1
         IF(MOD(ii,2)==0)THEN
-          vel(k,i)=SIGMA*DSQRT(-2.D0*DLOG(dum(2)))*DCOS(2.D0*pi*dum(k))
+          vel(k,i)=SIGMA*DSQRT(-2.D0*DLOG(dum(2)))*DCOS(2.D0*pi*dum(1))
         ELSE
-          vel(k,i)=SIGMA*DSQRT(-2.D0*DLOG(dum(2)))*DSIN(2.D0*pi*dum(k))
+          vel(k,i)=SIGMA*DSQRT(-2.D0*DLOG(dum(2)))*DSIN(2.D0*pi*dum(1))
         END IF
       END DO
     END DO
@@ -69,7 +69,8 @@ SUBROUTINE rescale_velocities(t)
 
     REAL*8  :: t0,scal
 
-    CALL temperature(t0) 
+    CALL temperature(t0)
+    print *, t0
     scal=DSQRT(t/t0)
     vel(:,:)=vel(:,:)*scal
 
@@ -77,7 +78,7 @@ SUBROUTINE rescale_velocities(t)
 !-----------------------------------------------------------------------------------------
 SUBROUTINE temperature(t)
     IMPLICIT NONE
-    REAL*8 :: t
+    REAL*8, INTENT(out) :: t
 
     INTEGER :: i
     REAL*8 :: mv2
@@ -86,7 +87,7 @@ SUBROUTINE temperature(t)
     DO i=1,natoms
       mv2=mv2+DOT_PRODUCT(vel(1:ndim,i),vel(1:ndim,i)) 
     END DO
-    t=0.5d0*mv2/DFLOAT(natoms)
+    t=(real(1)/3.d0)*mv2/DFLOAT(natoms)
   END SUBROUTINE temperature
 !-----------------------------------------------------------------------------------------
   SUBROUTINE velocity_verlet_r
@@ -195,7 +196,7 @@ SUBROUTINE print_geo(filen,iacc)
       WRITE(*, '(5A12)')'ISTEP', 'TEMP.', 'K.E.', 'P.E.', 'T.E'
     END IF
 !
-    ke=dfloat(natoms)*temp
+    ke=1.5*dfloat(natoms)*temp
     te=ke+energy
  !
     WRITE(*,*)istep, temp, ke, energy, te
