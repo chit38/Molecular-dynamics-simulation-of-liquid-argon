@@ -20,8 +20,8 @@ subroutine create_lattice()
     print *,"Please enter step size and number of steps"
     read(*,*)dt, maxstep
 
-    L = (real(natoms)/rho)**(1.d0/3)
-    dx = L/12
+    L = (natoms*1.d0/rho)**(1.d0/3.d0)
+    dx = L/12.d0
     print *,L
     allocate(pos(ndim,natoms))
     index = 0
@@ -87,7 +87,7 @@ SUBROUTINE temperature(t)
     DO i=1,natoms
       mv2=mv2+DOT_PRODUCT(vel(1:ndim,i),vel(1:ndim,i)) 
     END DO
-    t=(real(1)/3.d0)*mv2/DFLOAT(natoms)
+    t=(1.d0/3.d0)*mv2/DFLOAT(natoms)
   END SUBROUTINE temperature
 !-----------------------------------------------------------------------------------------
   SUBROUTINE velocity_verlet_r
@@ -196,10 +196,10 @@ SUBROUTINE print_geo(filen,iacc)
       WRITE(*, '(5A12)')'ISTEP', 'TEMP.', 'K.E.', 'P.E.', 'T.E'
     END IF
 !
-    ke=1.5*dfloat(natoms)*temp
+    ke=1.5d0*dfloat(natoms)*temp
     te=ke+energy
  !
-    WRITE(*,*)istep, temp, ke, energy, te
+    WRITE(*,"(I12, 4F14.4)")istep, temp, ke, energy, te
     WRITE(11,*)istep, temp, ke, energy, te
 END SUBROUTINE print_energy
 !------------------------------------------------------------------------------

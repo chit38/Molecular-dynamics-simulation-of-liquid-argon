@@ -17,7 +17,7 @@ open(13,file="traj.xyz",status='unknown')
     read(13,*)nat
     read(13,*)comment
     do j = 1,nat
-       read(13,'(a2,3f15.6)') at, xyz(i,j,1:3)
+       read(13,'(a2,3f16.6)') at, xyz(i,j,1:3)
     enddo
 enddo
     
