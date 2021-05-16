@@ -16,13 +16,14 @@ subroutine create_lattice()
     print *,"Please enter density"
     read(*,*)rho
     print *,"Please enter Temperature"
-    read(*,*)Temp
+    read(*,*)temp
     print *,"Please enter step size and number of steps"
     read(*,*)dt, maxstep
 
-    L = (natoms*1.d0/rho)**(1.d0/3.d0)
+    t0 = temp
+    L = (dfloat(natoms)*2.d0/rho)**(1.d0/3.d0)
     dx = L/12.d0
-    print *,L
+    print *,L, dx
     allocate(pos(ndim,natoms))
     index = 0
     do i = 1, 12
@@ -31,7 +32,7 @@ subroutine create_lattice()
                 index = (i-1)*72 + (j-1)*6 + k
                 pos(1, index) = 0.5 + (i-1)*dx
                 pos(2, index) = 0.5 + (j-1)*dx
-                pos(3, index) = 0.5 + (k-1)*dx*2
+                pos(3, index) = 0.5 + (k-1)*dx
             end do
         end do
     end do
@@ -58,6 +59,7 @@ SUBROUTINE get_initial_velocities
         END IF
       END DO
     END DO
+    !CALL temperature(temp)
     CALL rescale_velocities(temp)
     WRITE(6,*) "Initial velocities are assigned for T=", TEMP
   END SUBROUTINE get_initial_velocities
@@ -78,7 +80,7 @@ SUBROUTINE rescale_velocities(t)
 !-----------------------------------------------------------------------------------------
 SUBROUTINE temperature(t)
     IMPLICIT NONE
-    REAL*8, INTENT(out) :: t
+    REAL*8, intent(out) :: t
 
     INTEGER :: i
     REAL*8 :: mv2
@@ -132,6 +134,9 @@ SUBROUTINE print_geo(filen,iacc)
         IF(pos(j,i)>L)pos(j,i)=pos(J,I)-L
         IF(pos(j,i)<0.d0)pos(j,i)=pos(j,i)+L
       END DO
+      !if(pos(3,i)>L/2)then 
+      !pos(3,i) = pos(3,i)-L/2
+      !end if
       WRITE(1,"(A,3F16.6)") "Ar", pos(1:3,i)
     END DO
     CLOSE(1)
@@ -199,7 +204,7 @@ SUBROUTINE print_geo(filen,iacc)
     ke=1.5d0*dfloat(natoms)*temp
     te=ke+energy
  !
-    WRITE(*,"(I12, 4F14.4)")istep, temp, ke, energy, te
+    WRITE(*,"(I12, 4F24.4)")istep, temp, ke, energy, te
     WRITE(11,*)istep, temp, ke, energy, te
 END SUBROUTINE print_energy
 !------------------------------------------------------------------------------

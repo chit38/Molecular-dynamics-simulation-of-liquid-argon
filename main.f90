@@ -20,13 +20,13 @@ DO istep=1,maxstep
     CALL energy_forces
     CALL velocity_verlet_v
 !   Properties: Temperature 
-    CALL temperature(temp)
-    IF(MOD(istep,50).EQ.0)THEN 
+   CALL temperature(temp)
+    IF(MOD(istep,10).EQ.0)THEN 
      CALL print_geo('traj.xyz',istep)
-     CALL print_energy(istep)
+   CALL print_energy(istep)
      T = T + 1
     END IF
-  END DO
+ END DO
 
 call calculate_gr(T)
 call rmsd(T)

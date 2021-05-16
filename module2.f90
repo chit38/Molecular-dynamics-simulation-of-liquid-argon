@@ -10,8 +10,8 @@ real*8 :: r = 0, d(3), rjk, step
 real*8, allocatable :: dum(:), g(:), xyz(:,:,:)
 character(len=2) :: comment, at
 
-step = 0.2d0
-maxiter = int((L/2.d0)/step)+1
+step = 0.05d0
+maxiter = int((L/2.d0)/step)
 print *, maxiter
 allocate(dum(maxiter))
 allocate(g(maxiter))
